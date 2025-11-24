@@ -1,561 +1,673 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transforme o Seu Negócio Digital | Serviço Profissional de Desenvolvimento</title>
-    
-    <!-- Carrega o Tailwind CSS CDN para estilização rápida e responsiva -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Configuração de tipografia (Fonte Inter) e esquema de cores (FELIZ/VIBRANTE) -->
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'primary-light': '#ffffff', // Fundo principal (Branco)
-                        'secondary-light': '#f1f5f9', // Fundo secundário (Slate-100)
-                        'accent-teal': '#14b8a6', // Cor de destaque (Cyan/Teal)
-                        'text-dark': '#0f172a', // Cor do texto principal (Slate-900)
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <style>
-        /* Estilos adicionais para o gradiente de fundo no Hero */
-        .hero-bg {
-            background-color: theme('colors.primary-light');
-            background-image: radial-gradient(at 0% 0%, theme('colors.secondary-light') 0%, transparent 50%),
-                              radial-gradient(at 100% 100%, theme('colors.accent-teal') 0%, transparent 80%);
-            background-size: cover;
-            background-position: center;
-        }
-        /* Efeito de hover suave para botões */
-        .btn-primary {
-            transition: all 0.3s ease;
-        }
-        .btn-primary:hover {
-            box-shadow: 0 4px 15px -5px theme('colors.accent-teal');
-            transform: translateY(-2px);
-        }
-    </style>
-    
-    <!-- Importações e Lógica do Firebase para o Chat em Tempo Real -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, setLogLevel, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        // Ativar o logging de Debug para o Firestore
-        setLogLevel('debug');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transforme o Seu Negócio Digital | Serviço Profissional de Desenvolvimento</title>
+    
+    <!-- Carrega o Tailwind CSS CDN para estilização rápida e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Configuração de tipografia (Fonte Inter) e esquema de cores (FELIZ/VIBRANTE) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-light': '#ffffff', // Fundo principal (Branco)
+                        'secondary-light': '#f1f5f9', // Fundo secundário (Slate-100)
+                        'accent-teal': '#14b8a6', // Cor de destaque (Cyan/Teal)
+                        'text-dark': '#0f172a', // Cor do texto principal (Slate-900)
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+     <style>
+  body { font-family: 'Inter', sans-serif; }
 
-        // --- Variáveis Globais de Configuração do Ambiente ---
-        let firebaseConfig = {};
-        try {
-            // 1. Configuração do Firebase - Obtida da variável global do ambiente
-            const configString = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
-            firebaseConfig = JSON.parse(configString);
-        } catch (e) {
-            console.error("Erro ao analisar __firebase_config, usando configuração vazia:", e);
-        }
+  /* * CORREÇÃO: Removida a função theme() e substituída por cores HEX fixas, 
+   * porque o CDN do Tailwind não processa theme() em blocos <style> customizados.
+   */
+  
+  /* Estilos adicionais para o gradiente de fundo no Hero */
+  .hero-bg {
+      /* cores de exemplo que simulam light blue e teal */
+      --primary-light: #E0F2FE; /* Exemplo: Blue-100 */
+      --secondary-light: #CCFBF1; /* Exemplo: Teal-100 */
+      --accent-teal: #14B8A6; /* Exemplo: Teal-500 */
 
-        // 2. ID da Aplicação/Projeto (Usado para o caminho do Firestore)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.projectId || 'default-app-id';
+      /* O CSS puro não pode usar theme(), então usamos variáveis CSS ou valores fixos */
+      background-color: var(--primary-light); 
+      background-image: radial-gradient(at 0% 0%, var(--secondary-light) 0%, transparent 50%),
+                        radial-gradient(at 100% 100%, var(--accent-teal) 0%, transparent 80%);
+      background-size: cover;
+      background-position: center;
+  }
 
-        // 3. Token de Autenticação Inicial
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+  /* Efeito de hover suave para botões */
+  .btn-primary {
+      transition: all 0.3s ease;
+  }
+  
+  /* CORREÇÃO AQUI: Substituí theme('colors.accent-teal') por um valor HEX real */
+  .btn-primary:hover {
+      /* Cor real (Teal-500) para a sombra: #14B8A6 */
+      box-shadow: 0 4px 15px -5px #14B8A6; 
+      transform: translateY(-2px);
+  }
+</style>
+    
+    <!-- Importações e Lógica do Firebase para o Chat em Tempo Real -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, query, orderBy, addDoc, serverTimestamp, setLogLevel, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Ativar o logging de Debug para o Firestore
+        setLogLevel('debug');
 
-        let db = null; 
-        let auth = null; 
-        let userId = null;
-        let userNickname = 'Visitante';
-        
-        // Função utilitária para formatar a hora
-        const formatTime = (timestamp) => {
-            if (!timestamp) return '...';
-            
-            const date = timestamp.toDate && typeof timestamp.toDate === 'function' 
-                         ? timestamp.toDate() 
-                         : (timestamp.seconds ? new Date(timestamp.seconds * 1000) : new Date()); 
-            
-            if (isNaN(date.getTime())) return 'Inválida';
+        // --- Variáveis Globais de Configuração do Ambiente ---
+        let firebaseConfig = {};
+        try {
+            // 1. Configuração do Firebase - Obtida da variável global do ambiente
+            const configString = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
+            firebaseConfig = JSON.parse(configString);
+        } catch (e) {
+            console.error("Erro ao analisar __firebase_config, usando configuração vazia:", e);
+        }
 
-            return date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
-        };
-        
-        // Função para obter o caminho do documento de perfil privado
-        const getProfileDocRef = (uid) => {
-            // Caminho para dados PRIVADOS do utilizador
-            return doc(db, `artifacts/${appId}/users/${uid}/user_profile/profile`);
-        };
+        // 2. ID da Aplicação/Projeto (Usado para o caminho do Firestore)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : firebaseConfig.projectId || 'default-app-id';
 
-        // Função para ler o nickname do Firestore
-        async function getUserProfile(uid) {
-            if (!db) return; 
-            const profileRef = getProfileDocRef(uid);
-            try {
-                const docSnap = await getDoc(profileRef);
-                const defaultNickname = `Visitante (${uid.substring(0, 4)}...)`;
-                
-                if (docSnap.exists() && docSnap.data().nickname) {
-                    userNickname = docSnap.data().nickname;
-                } else {
-                    userNickname = defaultNickname;
-                }
-                document.getElementById('current-nickname-display').textContent = userNickname;
-                document.getElementById('nickname-input').value = userNickname.includes('Visitante') ? '' : userNickname; 
-            } catch (error) {
-                console.error("Erro ao ler o perfil do usuário:", error);
-                userNickname = `Visitante (${uid.substring(0, 4)}...)`;
-                document.getElementById('current-nickname-display').textContent = userNickname;
-                document.getElementById('nickname-input').value = '';
-            }
-        }
+        // 3. Token de Autenticação Inicial
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-        // Função para salvar o nickname no Firestore
-        window.setNickname = async () => {
-            const input = document.getElementById('nickname-input');
-            const newNickname = input.value.trim().substring(0, 20); 
-            if (!newNickname || !db || !userId) {
-                input.classList.add('border-yellow-500', 'bg-yellow-50');
-                setTimeout(() => input.classList.remove('border-yellow-500', 'bg-yellow-50'), 1500);
-                return;
-            }
+        let db = null; 
+        let auth = null; 
+        let userId = null;
+        let userNickname = 'Visitante';
+        
+        // Função utilitária para formatar a hora
+        const formatTime = (timestamp) => {
+            if (!timestamp) return '...';
+            
+            const date = timestamp.toDate && typeof timestamp.toDate === 'function' 
+                         ? timestamp.toDate() 
+                         : (timestamp.seconds ? new Date(timestamp.seconds * 1000) : new Date()); 
+            
+            if (isNaN(date.getTime())) return 'Inválida';
 
-            const profileRef = getProfileDocRef(userId);
+            return date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+        };
+        
+        // Função para obter o caminho do documento de perfil privado
+        const getProfileDocRef = (uid) => {
+            // Caminho para dados PRIVADOS do utilizador
+            return doc(db, `artifacts/${appId}/users/${uid}/user_profile/profile`);
+        };
 
-            try {
-                await setDoc(profileRef, { 
-                    nickname: newNickname, 
-                    updatedAt: serverTimestamp() 
-                }, { merge: true });
+        // Função para ler o nickname do Firestore
+        async function getUserProfile(uid) {
+            if (!db) return; 
+            const profileRef = getProfileDocRef(uid);
+            try {
+                const docSnap = await getDoc(profileRef);
+                const defaultNickname = `Visitante (${uid.substring(0, 4)}...)`;
+                
+                if (docSnap.exists() && docSnap.data().nickname) {
+                    userNickname = docSnap.data().nickname;
+                } else {
+                    userNickname = defaultNickname;
+                }
+                document.getElementById('current-nickname-display').textContent = userNickname;
+                document.getElementById('nickname-input').value = userNickname.includes('Visitante') ? '' : userNickname; 
+            } catch (error) {
+                console.error("Erro ao ler o perfil do usuário:", error);
+                userNickname = `Visitante (${uid.substring(0, 4)}...)`;
+                document.getElementById('current-nickname-display').textContent = userNickname;
+                document.getElementById('nickname-input').value = '';
+            }
+        }
 
-                userNickname = newNickname;
-                document.getElementById('current-nickname-display').textContent = userNickname;
+        // Função para salvar o nickname no Firestore
+        window.setNickname = async () => {
+            const input = document.getElementById('nickname-input');
+            const newNickname = input.value.trim().substring(0, 20); 
+            if (!newNickname || !db || !userId) {
+                input.classList.add('border-yellow-500', 'bg-yellow-50');
+                setTimeout(() => input.classList.remove('border-yellow-500', 'bg-yellow-50'), 1500);
+                return;
+            }
 
-                console.log("Nickname atualizado para:", newNickname);
-                input.classList.add('border-green-500', 'bg-green-50');
-                setTimeout(() => input.classList.remove('border-green-500', 'bg-green-50'), 1500);
+            const profileRef = getProfileDocRef(userId);
 
-            } catch (error) {
-                console.error("Erro ao salvar o nickname:", error);
-                input.classList.add('border-red-500', 'bg-red-50');
-                setTimeout(() => input.classList.remove('border-red-500', 'bg-red-50'), 1500);
-            }
-        };
+            try {
+                await setDoc(profileRef, { 
+                    nickname: newNickname, 
+                    updatedAt: serverTimestamp() 
+                }, { merge: true });
 
-        // Função principal de inicialização e autenticação
-        async function initializeFirebase() {
-            const chatMessagesElement = document.getElementById('chat-messages');
-            
-            // VERIFICAÇÃO CRÍTICA: Impedir o erro interno do Firebase
-            if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-                 console.error("ERRO CRÍTICO: Configuração do Firebase ausente ou inválida. O chat não pode iniciar.");
-                 chatMessagesElement.innerHTML = `
-                    <div class="text-center p-4">
-                        <p class="text-red-600 font-semibold">❌ Erro de Conexão</p>
-                        <p class="text-gray-600 text-xs mt-1">A configuração do Firebase (chaves de segurança) não foi carregada pelo ambiente.</p>
-                        <p class="text-gray-600 text-xs">O chat não pode iniciar. Verifique a consola.</p>
-                    </div>`;
-                 db = null; 
-                 return; 
-            }
-            
-            try {
-                const app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
+                userNickname = newNickname;
+                document.getElementById('current-nickname-display').textContent = userNickname;
 
-                // Autenticar com o token personalizado se existir, caso contrário, anonimamente
-                await setPersistence(auth, browserSessionPersistence);
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                console.log("Nickname atualizado para:", newNickname);
+                input.classList.add('border-green-500', 'bg-green-50');
+                setTimeout(() => input.classList.remove('border-green-500', 'bg-green-50'), 1500);
 
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        await getUserProfile(userId); 
-                        console.log("Usuário autenticado. UID:", userId);
-                        setupChatListener();
-                        document.getElementById('send-message-btn').disabled = false;
-                    } else {
-                        console.log("Usuário não autenticado.");
-                    }
-                });
+            } catch (error) {
+                console.error("Erro ao salvar o nickname:", error);
+                input.classList.add('border-red-500', 'bg-red-50');
+                setTimeout(() => input.classList.remove('border-red-500', 'bg-red-50'), 1500);
+            }
+        };
 
-            } catch (error) {
-                console.error("Erro na inicialização do Firebase ou autenticação:", error);
-                chatMessagesElement.innerHTML = '<p class="text-red-500 text-center text-sm">Erro: Impossível carregar o chat. Verifique a consola.</p>';
-            }
-        }
+        // --- NOVAS FUNÇÕES PARA O FORMULÁRIO DE LEADS ---
 
-        // Configurar o listener em tempo real para as mensagens do chat
-        function setupChatListener() {
-            if (!db || !userId) return;
+        /**
+         * Função para exibir feedback visual ao utilizador após o envio do formulário.
+         * @param {string} message - A mensagem a ser exibida.
+         * @param {'success' | 'error' | 'warning'} type - O tipo de mensagem para estilização.
+         */
+        function showFormFeedback(message, type) {
+            const feedbackElement = document.getElementById('form-feedback');
+            const baseClasses = 'p-2 rounded-lg transition-opacity duration-300';
+            
+            // Remove classes de estado anterior
+            feedbackElement.className = 'text-center mt-4 h-6 text-sm';
 
-            // Caminho para dados PÚBLICOS (compartilhados)
-            const chatPath = `/artifacts/${appId}/public/data/chat_messages`;
-            const messagesCollection = collection(db, chatPath);
-            
-            // Ordenar por timestamp descendente
-            const q = query(messagesCollection, orderBy("timestamp", "desc")); 
-            
-            const chatMessagesElement = document.getElementById('chat-messages');
+            let colorClasses = '';
+            if (type === 'success') {
+                colorClasses = 'bg-green-100 text-green-700';
+            } else if (type === 'error') {
+                colorClasses = 'bg-red-100 text-red-700';
+            } else if (type === 'warning') {
+                colorClasses = 'bg-yellow-100 text-yellow-700';
+            }
 
-            onSnapshot(q, (snapshot) => {
-                let messagesHtml = '';
-                const messages = [];
+            feedbackElement.innerHTML = `<span class="${baseClasses} ${colorClasses}">${message}</span>`;
+            
+            // Torna-o visível e agenda o desaparecimento
+            setTimeout(() => {
+                feedbackElement.innerHTML = '';
+                feedbackElement.className = 'text-center mt-4 h-6 text-sm'; // Limpar classes após desaparecer
+            }, 5000); 
+        }
 
-                // Reverte a ordem para mostrar as mais recentes em baixo
-                snapshot.docs.forEach(doc => messages.push(doc.data()));
-                messages.reverse();
-                
-                messages.forEach(msg => { 
-                    const isOwner = msg.userId === userId;
+        /**
+         * Lida com o envio do formulário de contacto, salvando a lead no Firestore.
+         * @param {Event} event - O evento de envio do formulário.
+         */
+        window.submitLeadForm = async (event) => {
+            event.preventDefault();
+            
+            if (!db) {
+                showFormFeedback('Erro: Conexão com o banco de dados não estabelecida.', 'error');
+                return;
+            }
 
-                    const fallbackName = `Visitante (${msg.userId.substring(0, 4)}...)`;
-                    const displayedName = msg.nickname || fallbackName;
-                    
-                    const messageClass = isOwner 
-                        ? 'bg-accent-teal text-white self-end' 
-                        : 'bg-gray-200 text-text-dark self-start';
-                        
-                    const nameStyle = isOwner 
-                        ? 'font-bold text-accent-teal self-end' 
-                        : 'text-gray-500 self-start';
+            const emailInput = document.getElementById('email');
+            const descriptionInput = document.getElementById('project_description');
+            const submitButton = event.target.querySelector('button[type="submit"]');
 
-                    messagesHtml += `
-                        <div class="flex flex-col mb-2">
-                            <span class="text-xs ${nameStyle}">${displayedName} ${isOwner ? '(Eu)' : ''}</span>
-                            <div class="max-w-[80%] p-3 rounded-xl shadow-md ${messageClass}">
-                                <p class="text-sm break-words">${msg.text}</p>
-                                <span class="text-[10px] opacity-75 mt-1 block ${isOwner ? 'text-white/80' : 'text-gray-600'}">${formatTime(msg.timestamp)}</span>
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                const wasScrolledToBottom = chatMessagesElement.scrollHeight - chatMessagesElement.clientHeight <= chatMessagesElement.scrollTop + 1;
+            const email = emailInput.value.trim();
+            const description = descriptionInput.value.trim();
 
-                chatMessagesElement.innerHTML = messagesHtml;
-                
-                // Rola para baixo se o chat estava no fundo (comportamento de chat)
-                if (wasScrolledToBottom || snapshot.docChanges().length === snapshot.size) {
-                    chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
-                }
-            }, (error) => {
-                console.error("Erro ao obter mensagens do chat:", error);
-                chatMessagesElement.innerHTML = '<p class="text-red-500 text-center text-sm">Erro ao carregar mensagens.</p>';
-            });
-        }
+            if (!email || !description) {
+                showFormFeedback('Por favor, preencha todos os campos obrigatórios.', 'warning');
+                return;
+            }
+            
+            // Desativa o botão para evitar envios duplicados
+            submitButton.disabled = true;
+            showFormFeedback('A enviar pedido...', 'warning');
 
-        // Função para enviar uma nova mensagem
-        window.sendMessage = async () => {
-            const input = document.getElementById('message-input');
-            const text = input.value.trim();
-            if (!text || !db || !userId) return;
+            try {
+                // Caminho para dados PÚBLICOS da coleção leads
+                const leadsPath = `/artifacts/${appId}/public/data/leads`;
 
-            try {
-                // Caminho para dados PÚBLICOS (compartilhados)
-                const chatPath = `/artifacts/${appId}/public/data/chat_messages`;
-                await addDoc(collection(db, chatPath), {
-                    userId: userId,
-                    // Garante que não envia 'Visitante' se o utilizador não o alterou
-                    nickname: userNickname.includes('Visitante') ? null : userNickname,
-                    text: text,
-                    timestamp: serverTimestamp()
-                });
-                input.value = ''; 
-            } catch (error) {
-                console.error("Erro ao enviar mensagem:", error);
-                document.getElementById('chat-messages').insertAdjacentHTML('beforeend', '<p class="text-red-500 text-center text-xs">Falha ao enviar.</p>');
-            }
-        };
+                await addDoc(collection(db, leadsPath), {
+                    email: email,
+                    description: description,
+                    source: window.location.href, 
+                    timestamp: serverTimestamp()
+                });
 
-        // Função para mostrar/esconder o chat
-        window.toggleChat = () => {
-            const widget = document.getElementById('chat-widget-window');
-            const isHidden = widget.classList.toggle('hidden');
-            if (!isHidden && !db) {
-                // Inicia o Firebase apenas quando o chat é aberto pela primeira vez
-                initializeFirebase();
-            }
-        };
+                showFormFeedback('Sucesso! O seu pedido foi enviado. Entraremos em contacto brevemente.', 'success');
+                // Limpar o formulário
+                emailInput.value = '';
+                descriptionInput.value = '';
 
-        // Adiciona um listener para enviar a mensagem ao pressionar ENTER
-        document.addEventListener('DOMContentLoaded', () => {
-            const input = document.getElementById('message-input');
-            if (input) {
-                input.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        window.sendMessage();
-                    }
-                });
-            }
-        });
-        
-    </script>
+            } catch (error) {
+                console.error("Erro ao submeter a lead:", error);
+                showFormFeedback(`Erro: Não foi possível enviar o pedido. Tente novamente. (${error.message})`, 'error');
+            } finally {
+                // Reativa o botão após o processo (mesmo em caso de erro)
+                submitButton.disabled = false;
+            }
+        };
+
+        // --- CONTINUAÇÃO DAS FUNÇÕES DO CHAT ---
+
+        // Função principal de inicialização e autenticação
+        async function initializeFirebase() {
+            const chatMessagesElement = document.getElementById('chat-messages');
+            
+            // VERIFICAÇÃO CRÍTICA: Impedir o erro interno do Firebase
+            if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+                 console.error("ERRO CRÍTICO: Configuração do Firebase ausente ou inválida. O chat não pode iniciar.");
+                 chatMessagesElement.innerHTML = `
+                    <div class="text-center p-4">
+                        <p class="text-red-600 font-semibold">❌ Erro de Conexão</p>
+                        <p class="text-gray-600 text-xs mt-1">A configuração do Firebase (chaves de segurança) não foi carregada pelo ambiente.</p>
+                        <p class="text-gray-600 text-xs">O chat não pode iniciar. Verifique a consola.</p>
+                    </div>`;
+                 db = null; 
+                 return; 
+            }
+            
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Autenticar com o token personalizado se existir, caso contrário, anonimamente
+                await setPersistence(auth, browserSessionPersistence);
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        await getUserProfile(userId); 
+                        console.log("Usuário autenticado. UID:", userId);
+                        setupChatListener();
+                        document.getElementById('send-message-btn').disabled = false;
+                    } else {
+                        console.log("Usuário não autenticado.");
+                    }
+                });
+
+            } catch (error) {
+                console.error("Erro na inicialização do Firebase ou autenticação:", error);
+                chatMessagesElement.innerHTML = '<p class="text-red-500 text-center text-sm">Erro: Impossível carregar o chat. Verifique a consola.</p>';
+            }
+        }
+
+        // Configurar o listener em tempo real para as mensagens do chat
+        function setupChatListener() {
+            if (!db || !userId) return;
+
+            // Caminho para dados PÚBLICOS (compartilhados)
+            const chatPath = `/artifacts/${appId}/public/data/chat_messages`;
+            const messagesCollection = collection(db, chatPath);
+            
+            // Ordenar por timestamp descendente
+            const q = query(messagesCollection, orderBy("timestamp", "desc")); 
+            
+            const chatMessagesElement = document.getElementById('chat-messages');
+
+            onSnapshot(q, (snapshot) => {
+                let messagesHtml = '';
+                const messages = [];
+
+                // Reverte a ordem para mostrar as mais recentes em baixo
+                snapshot.docs.forEach(doc => messages.push(doc.data()));
+                messages.reverse();
+                
+                messages.forEach(msg => { 
+                    const isOwner = msg.userId === userId;
+
+                    const fallbackName = `Visitante (${msg.userId.substring(0, 4)}...)`;
+                    const displayedName = msg.nickname || fallbackName;
+                    
+                    const messageClass = isOwner 
+                        ? 'bg-accent-teal text-white self-end' 
+                        : 'bg-gray-200 text-text-dark self-start';
+                        
+                    const nameStyle = isOwner 
+                        ? 'font-bold text-accent-teal self-end' 
+                        : 'text-gray-500 self-start';
+
+                    messagesHtml += `
+                        <div class="flex flex-col mb-2">
+                            <span class="text-xs ${nameStyle}">${displayedName} ${isOwner ? '(Eu)' : ''}</span>
+                            <div class="max-w-[80%] p-3 rounded-xl shadow-md ${messageClass}">
+                                <p class="text-sm break-words">${msg.text}</p>
+                                <span class="text-[10px] opacity-75 mt-1 block ${isOwner ? 'text-white/80' : 'text-gray-600'}">${formatTime(msg.timestamp)}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                const wasScrolledToBottom = chatMessagesElement.scrollHeight - chatMessagesElement.clientHeight <= chatMessagesElement.scrollTop + 1;
+
+                chatMessagesElement.innerHTML = messagesHtml;
+                
+                // Rola para baixo se o chat estava no fundo (comportamento de chat)
+                if (wasScrolledToBottom || snapshot.docChanges().length === snapshot.size) {
+                    chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
+                }
+            }, (error) => {
+                console.error("Erro ao obter mensagens do chat:", error);
+                chatMessagesElement.innerHTML = '<p class="text-red-500 text-center text-sm">Erro ao carregar mensagens.</p>';
+            });
+        }
+
+        // Função para enviar uma nova mensagem
+        window.sendMessage = async () => {
+            const input = document.getElementById('message-input');
+            const text = input.value.trim();
+            if (!text || !db || !userId) return;
+
+            try {
+                // Caminho para dados PÚBLICOS (compartilhados)
+                const chatPath = `/artifacts/${appId}/public/data/chat_messages`;
+                await addDoc(collection(db, chatPath), {
+                    userId: userId,
+                    // Garante que não envia 'Visitante' se o utilizador não o alterou
+                    nickname: userNickname.includes('Visitante') ? null : userNickname,
+                    text: text,
+                    timestamp: serverTimestamp()
+                });
+                input.value = ''; 
+            } catch (error) {
+                console.error("Erro ao enviar mensagem:", error);
+                document.getElementById('chat-messages').insertAdjacentHTML('beforeend', '<p class="text-red-500 text-center text-xs">Falha ao enviar.</p>');
+            }
+        };
+
+        // Função para mostrar/esconder o chat
+        window.toggleChat = () => {
+            const widget = document.getElementById('chat-widget-window');
+            const isHidden = widget.classList.toggle('hidden');
+            if (!isHidden && !db) {
+                // Inicia o Firebase apenas quando o chat é aberto pela primeira vez
+                initializeFirebase();
+            }
+        };
+
+        // Adiciona um listener para enviar a mensagem ao pressionar ENTER
+        document.addEventListener('DOMContentLoaded', () => {
+            const input = document.getElementById('message-input');
+            if (input) {
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        window.sendMessage();
+                    }
+                });
+            }
+            
+            // Inicia o Firebase de forma silenciosa para o formulário de Leads se não tiver iniciado pelo chat
+            if (!db && document.getElementById('contacto')) {
+                initializeFirebase(); 
+            }
+        });
+        
+    </script>
 </head>
 
 <body class="bg-primary-light text-text-dark font-sans">
-    
-    <!-- 1. Cabeçalho/Navegação (Focado no Serviço) -->
-    <header class="sticky top-0 z-50 bg-primary-light/90 backdrop-blur-sm shadow-lg">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Logótipo/Nome do Serviço -->
-            <a href="#" class="text-2xl font-bold text-accent-teal hover:text-text-dark transition duration-300">
-                PRO<span class="text-text-dark">SOLUTIONS</span>
-            </a>
-            
-            <!-- Menu Simples - Foco na Conversão -->
-            <div class="hidden md:flex space-x-8">
-                <a href="#beneficios" class="text-text-dark hover:text-accent-teal transition duration-300">Serviços</a>
-                <a href="#tecnologia" class="text-text-dark hover:text-accent-teal transition duration-300">Tecnologia</a>
-                <a href="#contacto" class="text-text-dark hover:text-accent-teal transition duration-300 font-bold">CONTACTO</a>
-            </div>
+    
+    <!-- 1. Cabeçalho/Navegação (Focado no Serviço) -->
+    <header class="sticky top-0 z-50 bg-primary-light/90 backdrop-blur-sm shadow-lg">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logótipo/Nome do Serviço -->
+            <a href="#" class="text-2xl font-bold text-accent-teal hover:text-text-dark transition duration-300">
+                PRO<span class="text-text-dark">SOLUTIONS</span>
+            </a>
+            
+            <!-- Menu Simples - Foco na Conversão -->
+            <div class="hidden md:flex space-x-8">
+                <a href="#beneficios" class="text-text-dark hover:text-accent-teal transition duration-300">Serviços</a>
+                <a href="#tecnologia" class="text-text-dark hover:text-accent-teal transition duration-300">Tecnologia</a>
+                <a href="#contacto" class="text-text-dark hover:text-accent-teal transition duration-300 font-bold">CONTACTO</a>
+            </div>
 
-            <!-- Botão de Ação -->
-            <a href="#contacto" class="hidden md:block bg-accent-teal text-white py-2 px-4 rounded-full font-semibold btn-primary">
-                Começar o Projeto
-            </a>
+            <!-- Botão de Ação -->
+            <a href="#contacto" class="hidden md:block bg-accent-teal text-white py-2 px-4 rounded-full font-semibold btn-primary">
+                Começar o Projeto
+            </a>
 
-            <!-- Botão do Menu Hamburguer (Mobile) - Deixamos simples por enquanto -->
-            <button class="md:hidden text-text-dark focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-            </button>
-        </nav>
-    </header>
+            <!-- Botão do Menu Hamburguer (Mobile) - Deixamos simples por enquanto -->
+            <button class="md:hidden text-text-dark focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+    </header>
 
-    <main>
-        
-        <!-- 2. Secção Principal (HERO - Proposta de Valor) -->
-        <section id="inicio" class="hero-bg py-20 md:py-32 text-center border-b border-gray-200 text-text-dark">
-            <div class="container mx-auto px-6 max-w-5xl">
-                
-                <!-- Título Focado no Problema/Solução -->
-                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold mb-6 leading-tight tracking-tight">
-                    Pare de Sonhar. Lance o Seu Produto Digital **em 4 Semanas**.
-                </h1>
-                <p class="text-xl sm:text-2xl text-gray-600 max-w-4xl mx-auto mb-10">
-                    Construímos aplicações web de alto desempenho e plataformas escaláveis. Foco total em eficiência, velocidade e segurança.
-                </p>
-                
-                <!-- Chamada à Ação PRINCIPAL: Leva ao formulário de contacto -->
-                <a href="#contacto" class="bg-accent-teal text-white text-lg font-bold py-4 px-10 rounded-full shadow-lg btn-primary inline-block uppercase tracking-wider">
-                    Solicitar Orçamento Gratuito
-                </a>
-            </div>
-        </section>
+    <main>
+        
+        <!-- 2. Secção Principal (HERO - Proposta de Valor) -->
+        <section id="inicio" class="hero-bg py-20 md:py-32 text-center border-b border-gray-200 text-text-dark">
+            <div class="container mx-auto px-6 max-w-5xl">
+                
+                <!-- Título Focado no Problema/Solução -->
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold mb-6 leading-tight tracking-tight">
+                    Pare de Sonhar. Lance o Seu Produto Digital **em 4 Semanas**.
+                </h1>
+                <p class="text-xl sm:text-2xl text-gray-600 max-w-4xl mx-auto mb-10">
+                    Construímos aplicações web de alto desempenho e plataformas escaláveis. Foco total em eficiência, velocidade e segurança.
+                </p>
+                
+                <!-- Chamada à Ação PRINCIPAL: Leva ao formulário de contacto -->
+                <a href="#contacto" class="bg-accent-teal text-white text-lg font-bold py-4 px-10 rounded-full shadow-lg btn-primary inline-block uppercase tracking-wider">
+                    Solicitar Orçamento Gratuito
+                </a>
+            </div>
+        </section>
 
-        <!-- 3. Secção de Benefícios (O Que Ganhamos) -->
-        <section id="beneficios" class="py-16 md:py-24 bg-primary-light text-text-dark">
-            <div class="container mx-auto px-6">
-                <h2 class="text-4xl font-bold text-center mb-16">Porque Escolher a ProSolutions?</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                    
-                    <!-- Benefício 1: Velocidade -->
-                    <div class="bg-secondary-light p-8 rounded-xl shadow-lg border-t-4 border-accent-teal hover:shadow-xl transition duration-300">
-                        <span class="text-4xl mb-4 block">⚡️</span>
-                        <h3 class="text-2xl font-semibold mb-3">Entrega Rápida</h3>
-                        <p class="text-gray-600">
-                            Metodologia ágil focada em MVP (Produto Mínimo Viável). Colocamos o seu produto no mercado em tempo recorde para que possa começar a validar a sua ideia.
-                        </p>
-                    </div>
+        <!-- 3. Secção de Benefícios (O Que Ganhamos) -->
+        <section id="beneficios" class="py-16 md:py-24 bg-primary-light text-text-dark">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center mb-16">Porque Escolher a ProSolutions?</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    
+                    <!-- Benefício 1: Velocidade -->
+                    <div class="bg-secondary-light p-8 rounded-xl shadow-lg border-t-4 border-accent-teal hover:shadow-xl transition duration-300">
+                        <span class="text-4xl mb-4 block">⚡️</span>
+                        <h3 class="text-2xl font-semibold mb-3">Entrega Rápida</h3>
+                        <p class="text-gray-600">
+                            Metodologia ágil focada em MVP (Produto Mínimo Viável). Colocamos o seu produto no mercado em tempo recorde para que possa começar a validar a sua ideia.
+                        </p>
+                    </div>
 
-                    <!-- Benefício 2: Escalabilidade -->
-                    <div class="bg-secondary-light p-8 rounded-xl shadow-lg border-t-4 border-accent-teal hover:shadow-xl transition duration-300">
-                        <span class="text-4xl mb-4 block">☁️</span>
-                        <h3 class="text-2xl font-semibold mb-3">Arquitetura Escalável</h3>
-                        <p class="text-gray-600">
-                            Construído sobre a cloud (AWS, Azure) com microsserviços e contentores. O seu produto cresce consigo, sem gargalos técnicos.
-                        </p>
-                    </div>
+                    <!-- Benefício 2: Escalabilidade -->
+                    <div class="bg-secondary-light p-8 rounded-xl shadow-lg border-t-4 border-accent-teal hover:shadow-xl transition duration-300">
+                        <span class="text-4xl mb-4 block">☁️</span>
+                        <h3 class="text-2xl font-semibold mb-3">Arquitetura Escalável</h3>
+                        <p class="text-gray-600">
+                            Construído sobre a cloud (AWS, Azure) com microsserviços e contentores. O seu produto cresce consigo, sem gargalos técnicos.
+                        </p>
+                    </div>
 
-                    <!-- Benefício 3: Segurança -->
-                    <div class="bg-secondary-light p-8 rounded-xl shadow-lg border-t-4 border-accent-teal hover:shadow-xl transition duration-300">
-                        <span class="text-4xl mb-4 block">🔒</span>
-                        <h3 class="text-2xl font-semibold mb-3">Segurança e Manutenção</h3>
-                        <p class="text-gray-600">
-                            Desenvolvimento com práticas de segurança por design. Oferecemos suporte completo pós-lançamento e garantia de código.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
+                    <!-- Benefício 3: Segurança -->
+                    <div class="bg-secondary-light p-8 rounded-xl shadow-lg border-t-4 border-accent-teal hover:shadow-xl transition duration-300">
+                        <span class="text-4xl mb-4 block">🔒</span>
+                        <h3 class="text-2xl font-semibold mb-3">Segurança e Manutenção</h3>
+                        <p class="text-gray-600">
+                            Desenvolvimento com práticas de segurança por design. Oferecemos suporte completo pós-lançamento e garantia de código.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <!-- 4. Secção de Chamada à Ação Central (Formulário) -->
-        <section id="contacto" class="py-16 md:py-24 bg-secondary-light text-text-dark border-t border-gray-200">
-            <div class="container mx-auto px-6 max-w-2xl">
-                <div class="bg-primary-light p-8 md:p-12 rounded-xl shadow-2xl border border-gray-300 text-center">
-                    <h2 class="text-4xl font-extrabold mb-4 text-accent-teal">Pronto para Começar?</h2>
-                    <p class="text-gray-600 mb-8 text-lg">
-                        Descreva o seu projeto. Responderemos em menos de 24 horas.
-                    </p>
+        <!-- 4. Secção de Chamada à Ação Central (Formulário) -->
+        <section id="contacto" class="py-16 md:py-24 bg-secondary-light text-text-dark border-t border-gray-200">
+            <div class="container mx-auto px-6 max-w-2xl">
+                <div class="bg-primary-light p-8 md:p-12 rounded-xl shadow-2xl border border-gray-300 text-center">
+                    <h2 class="text-4xl font-extrabold mb-4 text-accent-teal">Pronto para Começar?</h2>
+                    <p class="text-gray-600 mb-8 text-lg">
+                        Descreva o seu projeto. Responderemos em menos de 24 horas.
+                    </p>
 
-                    <!-- Formulário de Contacto Simples -->
-                    <form onsubmit="event.preventDefault(); alert('Obrigado pelo seu interesse! Entraremos em contacto brevemente.');">
-                        <div class="space-y-4 text-left">
-                            <div>
-                                <label for="email" class="block text-sm font-medium text-text-dark mb-1">Seu Melhor Email</label>
-                                <input type="email" id="email" required placeholder="email@exemplo.com" 
-                                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-accent-teal focus:border-accent-teal">
-                            </div>
-                            <div>
-                                <label for="project_description" class="block text-sm font-medium text-text-dark mb-1">Descrição do Projeto</label>
-                                <textarea id="project_description" rows="4" required placeholder="Ex: Preciso de uma plataforma de agendamento online para a minha clínica..."
-                                          class="w-full p-3 border border-gray-300 rounded-lg focus:ring-accent-teal focus:border-accent-teal"></textarea>
-                            </div>
-                        </div>
+                    <!-- Formulário de Contacto Simples (AGORA LIGADO AO FIREBASE) -->
+                    <form onsubmit="submitLeadForm(event)">
+                        <div class="space-y-4 text-left">
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-text-dark mb-1">Seu Melhor Email</label>
+                                <input type="email" id="email" required placeholder="email@exemplo.com" 
+                                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-accent-teal focus:border-accent-teal">
+                            </div>
+                            <div>
+                                <label for="project_description" class="block text-sm font-medium text-text-dark mb-1">Descrição do Projeto</label>
+                                <textarea id="project_description" rows="4" required placeholder="Ex: Preciso de uma plataforma de agendamento online para a minha clínica..."
+                                          class="w-full p-3 border border-gray-300 rounded-lg focus:ring-accent-teal focus:border-accent-teal"></textarea>
+                            </div>
+                        </div>
 
-                        <button type="submit" class="w-full mt-6 bg-accent-teal text-white text-lg font-bold py-3 rounded-full btn-primary uppercase tracking-wider">
-                            Enviar Pedido de Orçamento
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </section>
+                        <!-- NOVO ELEMENTO DE FEEDBACK -->
+                        <p id="form-feedback" class="text-center mt-4 h-6 text-sm"></p>
+                        
+                        <button type="submit" class="w-full mt-6 bg-accent-teal text-white text-lg font-bold py-3 rounded-full btn-primary uppercase tracking-wider">
+                            Enviar Pedido de Orçamento
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
 
-        <!-- 5. Secção de Testemunho (Prova Social) -->
-        <section class="py-16 md:py-24 bg-primary-light text-text-dark">
-            <div class="container mx-auto px-6 max-w-4xl text-center">
-                <h2 class="text-3xl font-bold mb-10">O Que Dizem os Nossos Clientes</h2>
-                <div class="bg-secondary-light p-8 rounded-xl shadow-xl border-l-4 border-accent-teal">
-                    <p class="text-2xl italic text-gray-700 mb-6">
-                        "A ProSolutions transformou a nossa ideia num produto funcional em 5 semanas. O desempenho superou todas as expectativas e a equipa foi incrivelmente profissional e responsiva. Um parceiro de valor inestimável."
-                    </p>
-                    <div class="font-semibold text-lg text-text-dark">- Dra. Sofia Costa, CEO da HealthTech Connect</div>
-                </div>
-            </div>
-        </section>
+        <!-- 5. Secção de Testemunho (Prova Social) -->
+        <section class="py-16 md:py-24 bg-primary-light text-text-dark">
+            <div class="container mx-auto px-6 max-w-4xl text-center">
+                <h2 class="text-3xl font-bold mb-10">O Que Dizem os Nossos Clientes</h2>
+                <div class="bg-secondary-light p-8 rounded-xl shadow-xl border-l-4 border-accent-teal">
+                    <p class="text-2xl italic text-gray-700 mb-6">
+                        "A ProSolutions transformou a nossa ideia num produto funcional em 5 semanas. O desempenho superou todas as expectativas e a equipa foi incrivelmente profissional e responsiva. Um parceiro de valor inestimável."
+                    </p>
+                    <div class="font-semibold text-lg text-text-dark">- Dra. Sofia Costa, CEO da HealthTech Connect</div>
+                </div>
+            </div>
+        </section>
 
-        <!-- 6. Secção de Tecnologia (Construindo Autoridade) -->
-        <section id="tecnologia" class="py-16 md:py-24 bg-secondary-light text-text-dark border-t border-gray-200">
-            <div class="container mx-auto px-6">
-                <h2 class="text-4xl font-bold text-center mb-4">A Nossa Tecnologia de Ponta</h2>
-                <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
-                    Usamos o que há de melhor no mercado para garantir soluções futuras, seguras e de fácil manutenção.
-                </p>
+        <!-- 6. Secção de Tecnologia (Construindo Autoridade) -->
+        <section id="tecnologia" class="py-16 md:py-24 bg-secondary-light text-text-dark border-t border-gray-200">
+            <div class="container mx-auto px-6">
+                <h2 class="text-4xl font-bold text-center mb-4">A Nossa Tecnologia de Ponta</h2>
+                <p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
+                    Usamos o que há de melhor no mercado para garantir soluções futuras, seguras e de fácil manutenção.
+                </p>
 
-                <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70">
-                    <!-- Ícones de Tecnologia (Use placeholders visuais de alta qualidade) -->
-                    <span class="text-xl font-bold text-gray-700">React</span>
-                    <span class="text-xl font-bold text-gray-700">Node.js</span>
-                    <span class="text-xl font-bold text-gray-700">AWS</span>
-                    <span class="text-xl font-bold text-gray-700">Python</span>
-                    <span class="text-xl font-bold text-gray-700">Docker</span>
-                    <span class="text-xl font-bold text-gray-700">PostgreSQL</span>
-                </div>
-            </div>
-        </section>
-        
-    </main>
+                <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70">
+                    <!-- Ícones de Tecnologia (Use placeholders visuais de alta qualidade) -->
+                    <span class="text-xl font-bold text-gray-700">React</span>
+                    <span class="text-xl font-bold text-gray-700">Node.js</span>
+                    <span class="text-xl font-bold text-gray-700">AWS</span>
+                    <span class="text-xl font-bold text-gray-700">Python</span>
+                    <span class="text-xl font-bold text-gray-700">Docker</span>
+                    <span class="text-xl font-bold text-gray-700">PostgreSQL</span>
+                </div>
+            </div>
+        </section>
+        
+    </main>
 
-    <!-- 7. Rodapé (Footer) -->
-    <footer class="bg-text-dark py-12 text-white">
-        <div class="container mx-auto px-6 text-center md:flex md:justify-between md:items-center">
-            
-            <div class="mb-6 md:mb-0">
-                <a href="#" class="text-xl font-bold text-accent-teal">PRO<span class="text-white">SOLUTIONS</span></a>
-                <p class="text-sm text-gray-400 mt-2">&copy; 2025 ProSolutions. Transformando Ideias.</p>
-            </div>
+    <!-- 7. Rodapé (Footer) -->
+    <footer class="bg-text-dark py-12 text-white">
+        <div class="container mx-auto px-6 text-center md:flex md:justify-between md:items-center">
+            
+            <div class="mb-6 md:mb-0">
+                <a href="#" class="text-xl font-bold text-accent-teal">PRO<span class="text-white">SOLUTIONS</span></a>
+                <p class="text-sm text-gray-400 mt-2">&copy; 2025 ProSolutions. Transformando Ideias.</p>
+                <p class="text-xs text-gray-600 mt-1">UID: ${userId ? userId.substring(0, 8) : 'A carregar...'}</p>
+            </div>
 
-            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8 text-sm">
-                <a href="mailto:contacto@prosolutions.com" class="text-gray-400 hover:text-accent-teal transition duration-300 font-semibold">contacto@prosolutions.com</a>
-                <a href="#" class="text-gray-400 hover:text-accent-teal transition duration-300">Política de Privacidade</a>
-            </div>
+            <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-8 text-sm">
+                <a href="mailto:contacto@prosolutions.com" class="text-gray-400 hover:text-accent-teal transition duration-300 font-semibold">contacto@prosolutions.com</a>
+                <a href="#" class="text-gray-400 hover:text-accent-teal transition duration-300">Política de Privacidade</a>
+            </div>
 
-        </div>
-    </footer>
+        </div>
+    </footer>
 
-    <!-- 8. WIDGET DE CHAT EM TEMPO REAL (FIREBASE) -->
-    <div class="fixed bottom-6 right-6 z-50">
-        <!-- Botão Flutuante (Aberto/Fechado) -->
-        <button onclick="toggleChat()" 
-                class="bg-accent-teal text-white p-4 rounded-full shadow-2xl hover:bg-cyan-700 transition duration-300 btn-primary flex items-center justify-center w-16 h-16">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-        </button>
+    <!-- 8. WIDGET DE CHAT EM TEMPO REAL (FIREBASE) -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <!-- Botão Flutuante (Aberto/Fechado) -->
+        <button onclick="toggleChat()" 
+                class="bg-accent-teal text-white p-4 rounded-full shadow-2xl hover:bg-cyan-700 transition duration-300 btn-primary flex items-center justify-center w-16 h-16">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+        </button>
 
-        <!-- Janela do Chat -->
-        <div id="chat-widget-window" class="hidden absolute bottom-20 right-0 w-80 h-96 bg-white rounded-lg shadow-2xl flex flex-col overflow-hidden border border-gray-300">
-            <!-- Cabeçalho do Chat -->
-            <div class="bg-accent-teal p-3 text-white flex justify-between items-center">
-                <h3 class="font-bold">Chat de Suporte (24/7)</h3>
-                <button onclick="toggleChat()" class="text-white hover:text-gray-100">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
+        <!-- Janela do Chat -->
+        <div id="chat-widget-window" class="hidden absolute bottom-20 right-0 w-80 h-96 bg-white rounded-lg shadow-2xl flex flex-col overflow-hidden border border-gray-300">
+            <!-- Cabeçalho do Chat -->
+            <div class="bg-accent-teal p-3 text-white flex justify-between items-center">
+                <h3 class="font-bold">Chat de Suporte (24/7)</h3>
+                <button onclick="toggleChat()" class="text-white hover:text-gray-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
 
-            <!-- NOVO: Configuração do Nickname -->
-            <div class="p-3 border-b border-gray-200 bg-secondary-light">
-                <p class="text-xs text-gray-700 mb-1">Seu Nickname Atual: <span id="current-nickname-display" class="font-semibold text-accent-teal">Visitante</span></p>
-                <form onsubmit="event.preventDefault(); setNickname();" class="flex space-x-2">
-                    <input type="text" id="nickname-input" placeholder="Definir Nickname (máx 20)" 
-                           maxlength="20"
-                           class="flex-grow p-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-accent-teal text-text-dark transition duration-150" 
-                           autocomplete="off">
-                    <button type="submit"
-                            class="bg-accent-teal text-white text-xs font-semibold px-3 py-1 rounded-lg hover:bg-cyan-700 transition duration-300 flex-shrink-0">
-                        Salvar
-                    </button>
-                </form>
-            </div>
+            <!-- NOVO: Configuração do Nickname -->
+            <div class="p-3 border-b border-gray-200 bg-secondary-light">
+                <p class="text-xs text-gray-700 mb-1">Seu Nickname Atual: <span id="current-nickname-display" class="font-semibold text-accent-teal">Visitante</span></p>
+                <form onsubmit="event.preventDefault(); setNickname();" class="flex space-x-2">
+                    <input type="text" id="nickname-input" placeholder="Definir Nickname (máx 20)" 
+                           maxlength="20"
+                           class="flex-grow p-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:border-accent-teal text-text-dark transition duration-150" 
+                           autocomplete="off">
+                    <button type="submit"
+                            class="bg-accent-teal text-white text-xs font-semibold px-3 py-1 rounded-lg hover:bg-cyan-700 transition duration-300 flex-shrink-0">
+                        Salvar
+                    </button>
+                </form>
+            </div>
 
 
-            <!-- Área de Mensagens (Scrollable) -->
-            <div id="chat-messages" class="flex-grow p-4 overflow-y-auto space-y-3 bg-white text-sm">
-                <p class="text-center text-gray-500 italic text-xs">A carregar chat... Por favor, aguarde a conexão.</p>
-            </div>
+            <!-- Área de Mensagens (Scrollable) -->
+            <div id="chat-messages" class="flex-grow p-4 overflow-y-auto space-y-3 bg-white text-sm">
+                <p class="text-center text-gray-500 italic text-xs">A carregar chat... Por favor, aguarde a conexão.</p>
+            </div>
 
-            <!-- Formulário de Input -->
-            <div class="p-3 border-t border-gray-200">
-                <form onsubmit="event.preventDefault(); sendMessage();" class="flex">
-                    <input type="text" id="message-input" placeholder="Escreva a sua mensagem..." 
-                           class="flex-grow p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:border-accent-teal text-text-dark" 
-                           autocomplete="off">
-                    <button type="submit" id="send-message-btn" disabled
-                            class="bg-accent-teal text-white p-2 rounded-r-lg hover:bg-cyan-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
-                        Enviar
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
+            <!-- Formulário de Input -->
+            <div class="p-3 border-t border-gray-200">
+                <form onsubmit="event.preventDefault(); sendMessage();" class="flex">
+                    <input type="text" id="message-input" placeholder="Escreva a sua mensagem..." 
+                           class="flex-grow p-2 border border-gray-300 rounded-l-lg focus:outline-none focus:border-accent-teal text-text-dark" 
+                           autocomplete="off">
+                    <button type="submit" id="send-message-btn" disabled
+                            class="bg-accent-teal text-white p-2 rounded-r-lg hover:bg-cyan-700 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        Enviar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 
-    <!-- Script de JavaScript para Smooth Scroll (Rolagem Suave) -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const navLinks = document.querySelectorAll('a[href^="#"]');
+    <!-- Script de JavaScript para Smooth Scroll (Rolagem Suave) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('a[href^="#"]');
 
-            navLinks.forEach(link => {
-                const targetHref = link.getAttribute('href');
-                
-                if (targetHref && targetHref.length > 1) { 
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault(); 
+            navLinks.forEach(link => {
+                const targetHref = link.getAttribute('href');
+                
+                if (targetHref && targetHref.length > 1) { 
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault(); 
 
-                        const targetElement = document.querySelector(targetHref);
+                        const targetElement = document.querySelector(targetHref);
 
-                        if (targetElement) {
-                            targetElement.scrollIntoView({
-                                behavior: 'smooth',
-                                block: 'start'
-                            });
-                        }
-                    });
-                }
-            });
-        });
-    </script>
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>
